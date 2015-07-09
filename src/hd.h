@@ -1,6 +1,3 @@
-extern void write_port(unsigned short port, short data);
-extern short read_port(unsigned short port);
-
 int HD_WRITE = 0x30;
 int HD_READ = 0x20;
 
