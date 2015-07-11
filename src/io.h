@@ -1,11 +1,11 @@
 /*
-*  io.i
+*  io.h
 */
 
-const int STDOUT_FILENO = 1;//File descriptor for std out
-const int STDOUT_FILENO = 0;//File descriptor for std ini
-const int MEM_FILELOC = 0x100000;//Location of file in memory;
-const int *vidptr;
+const char STDOUT_FILENO = 1;//File descriptor for std out
+const char STDIN_FILENO = 0;//File descriptor for std ini
+char *MEM_FILELOC = (char *)0x100000;//Location of file in memory;
+char *vidptr = (char*)0xB8000;
 
 int curpos = 0; //Location of cursor
 void write(int fd,const char *buf,int nbytes) //Write nbytes of *buf to fd
