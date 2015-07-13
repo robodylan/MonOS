@@ -1,7 +1,7 @@
 int HD_WRITE = 0x30;
 int HD_READ = 0x20;
 
-hd_rw(unsigned int LBA, unsigned int com, unsigned int sectors_to_access, char *buf) 
+void hd_rw(unsigned int LBA, unsigned int com, unsigned int sectors_to_access, char *buf) 
 {
 	unsigned int tmpword;//Temporary storage of data
 	while((read_port(0x1F7)&0xC0) != 0x40);//Wait until disk is ready

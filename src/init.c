@@ -17,8 +17,9 @@ void main(void)
 {
 	//write();
 	kprintf("INIT: Entering runlevel 3");
+	handle_modifier("n");
 	kprintf("Setting up USB devices");
-	kb_init();	
+	//kb_init();
 	//dpt_init();
 	//cli_init();			
 }
