@@ -15,11 +15,10 @@ extern short read_port(unsigned short port);
 //Kernel Entry
 void main(void)
 {
-	//write();
-	kprintf("INIT: Entering runlevel 3");
-	handle_modifier("n");
-	kprintf("Setting up USB devices");
-	//kb_init();
+	write(STDOUT_FILENO, "Hello WOrld", 11);
+	kprintf("INIT: Entering runlevel 3\n");
+	kprintf("Setting up USB devices\n");
+	kb_init();
 	//dpt_init();
-	//cli_init();			
+	cli_init();			
 }
