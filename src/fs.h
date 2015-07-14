@@ -1,4 +1,4 @@
 void dpt_init()
 {
-	kprintf("Initializing disk partition table...");
+	//kprintf("Initializing disk partition table...");
 }

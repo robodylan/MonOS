@@ -41,5 +41,5 @@ unsigned char keyboard_map[128] = //Keyboard to ASCII convertion table
 void kb_init(void)//Init keyboard
 {
 	write_port(0x21, 0xFD);//Send signal to keyboard to initialize it
-	kprintf("Keyboard initialized");
+	//kprintf("Keyboard initialized");
 }

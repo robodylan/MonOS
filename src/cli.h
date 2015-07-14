@@ -1,38 +1,39 @@
-void kprintf(char *msg)
+int handle_modifier(char modifier)
 {
-	int i = 0;
-	while(msg[i] != 0)
-	{
-		if(msg[i] == 47 && msg[i + 1] != 47)
-		{
-			i++;
-			char mod = (char)msg[i];
-			handle_modifier(mod);	
-		}
-		else
-		{
-			char *c;
-			c[0] = msg[i]; 
-	    	write(STDOUT_FILENO, c, 1);
-			i++;
-		}
-	}		
-}
-void cli_init()
-{
-	kprintf("Hello World");
-}
-void handle_modifier(char modifier)
-{
-		if(modifier == 'n')
+		int isMod = 0;
+		if(modifier == '\n')//Modifier is Newline
 		{
 	    	//Newline
 			char curcol = curpos%160; //Find out which column we are in	
-			curpos = curpos +  (160 - curcol); 
+			curpos = curpos +  (160 - curcol);//Find difference to edge of screen and add it
+			isMod = 1;
 		}
-		if(modifier == 't')
+		if(modifier == '\t')//Modifier is Tab
 		{
 			//Tab
-			curpos = curpos + 8;
+			curpos = curpos + 8;//Move cursor position 4 characters 
+			isMod = 1;
 		}
+		return isMod;
+}
+
+void kprintf(char *msg)
+{
+	int i = 0;//Declare counter
+	while(msg[i] != 0)//Loop until string termination
+	{
+		char *c;//Define tmp character
+		if(handle_modifier(msg[i]))//Check if character is modifier and handle it
+		{
+			i++;	
+		}
+		c[0] = msg[i];//Set position 0 of pointer c to current character
+	    write(STDOUT_FILENO, c, 1);//Write out value of first position of c
+		i++;//Increment counter
+	}		
+}
+
+void cli_init() 
+{
+	//kprintf("Entering Command Line Interface...");
 }
