@@ -13,8 +13,7 @@ sudo mkfs.vfat -F 32 /dev/mapper/loop0p1
 sudo mkdir -p build/tmp/p1
 sudo mount /dev/mapper/loop0p1 build/tmp/p1
 sudo cp -r iso/*  build/tmp/p1
-echo "(hd0) /dev/loop0" > build/tmp/device.map
-sudo grub2-install --boot-directory=build/tmp/p1/boot --no-floppy --grub-mkdevicemap=build/tmp/device.map --modules="biosdisk part_msdos fat ext2 configfile normal multiboot" --root-directory=build/tmp/p1 /dev/loop0 
+sudo grub2-install --boot-directory=build/tmp/p1/boot --no-floppy --modules="biosdisk part_msdos fat ext2 configfile normal multiboot" --root-directory=build/tmp/p1 /dev/loop0 
 sudo umount build/tmp/p1
 sudo kpartx -d out/bootable.img
 qemu-system-i386 -hda out/bootable.img
