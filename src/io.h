@@ -1,7 +1,6 @@
 /*
 *  io.h
 */
-
 const char STDOUT_FILENO = 1;//File descriptor for std out
 const char STDIN_FILENO = 0;//File descriptor for std ini
 char *MEM_FILELOC = (char *)0x100000;//Location of file in memory;

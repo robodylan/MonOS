@@ -1,3 +1,4 @@
+//void kprintf(char* msg);
 unsigned char keyboard_map[128] = //Keyboard to ASCII convertion table 
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
@@ -41,5 +42,5 @@ unsigned char keyboard_map[128] = //Keyboard to ASCII convertion table
 void kb_init(void)//Init keyboard
 {
 	write_port(0x21, 0xFD);//Send signal to keyboard to initialize it
-	//kprintf("Keyboard initialized");
+	//kprintf("USB keyboard driver initialized\n");
 }

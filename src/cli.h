@@ -27,13 +27,16 @@ void kprintf(char *msg)
 		{
 			i++;	
 		}
+		else
+		{
 		c[0] = msg[i];//Set position 0 of pointer c to current character
 	    write(STDOUT_FILENO, c, 1);//Write out value of first position of c
 		i++;//Increment counter
+		}
 	}		
 }
 
 void cli_init() 
 {
-	//kprintf("Entering Command Line Interface...");
+	kprintf("Entering Command Line Interface...\n");
 }
