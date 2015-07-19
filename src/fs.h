@@ -1,4 +1,6 @@
-void dpt_init()
+void fs_init()
 {
-	kprintf("Initializing disk partition table...\n");
+	char info;
+	hd_rw(2048, HD_READ, 1, &info);
+	write(STDOUT_FILENO, &info, 512);	
 }
