@@ -14,6 +14,10 @@ int handle_modifier(char modifier)
 			curpos = curpos + 8;//Move cursor position 4 characters 
 			isMod = 1;
 		}
+		if(modifier == '\f')
+		{
+			curpos = curpos + ((80*2*25)-curpos);//Clear Screen
+		}
 		return isMod;
 }
 
@@ -29,9 +33,9 @@ void kprintf(char *msg)
 		}
 		else
 		{
-		c[0] = msg[i];//Set position 0 of pointer c to current character
-	    write(STDOUT_FILENO, c, 1);//Write out value of first position of c
-		i++;//Increment counter
+			c[0] = msg[i];//Set position 0 of pointer c to current character
+	    		write(STDOUT_FILENO, c, 1);//Write out value of first position of c
+			i++;//Increment counter
 		}
 	}		
 }
