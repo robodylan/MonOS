@@ -1,10 +1,12 @@
 unsigned int current_dir_sector = 2129;//Begin at root directory location
 int fs_init()
 {
-	kprintf("Debug: Checking to see if BOOT Directory exists\n");
-	if(fs_dir_exists("TEST    TXT"))
+	kprintf("Debug: Checking to see if TEST Directory exists\n");
+	if(fs_dir_exists("TEST       "))
 	{
-		kprintf("BOOT EXISTS!!!\n");	
+		kprintf("TEST EXISTS!!!\n");
+		fs_ls_dir("TEST       ");
+		fs_open_dir();	
 	}
 	fs_ls_dir();		
 }
@@ -18,7 +20,7 @@ int fs_open_dir(char *name)
 	{
 		if(compName(dirData, name))//See if file exists TODO: Check atrib byte to see if it is a directory
 		{
-			current_dir_sector = dirData[26];//TODO: This is temporary and it needs to be fixed 
+			current_dir_sector = (2048 + 187);//TODO: This is temporary and it needs to be fixed 
 		}
 		i += 64;
 		dirData += 64;
@@ -33,12 +35,22 @@ int fs_close_dir()
 int fs_ls_dir(void)//List contents of current directory, mainly for debug purposes
 {
 	kprintf("\nCurrent Directory ->\n");
-	char *dirData;//Init data for data
+	char *dirData;//Init buffer for data
 	hd_rw(current_dir_sector, HD_READ, 512, dirData);//Read data into buffer
 	int i = 0;//Init counter
 	while (i < 512)//Loop through entries in sector
 	{
-		write(STDOUT_FILENO, dirData, 32);//Write content of entry
+		int a = 0;//Init counter
+		while(dirData[a] != ' ' &&  dirData[a] != 0x00)//See how long the filename is
+		{
+			a++;//Increment counter
+		}
+		write(STDOUT_FILENO, dirData, a);//Write content of entry
+		if(dirData[8] != ' ' && dirData[8] != 0x00)//Check to see if there is a file extension
+	 	{
+			kprintf(".");
+			write(STDOUT_FILENO, &dirData[8], 3);	
+		}
 		kprintf("\n");//New line
 		i += 64;//Increment counter to next directory entry
 		dirData += 64;//Increment pointer to next directory entry
