@@ -1,3 +1,4 @@
+char PRINTF_COLOR;//TODO: Need to rename this 
 int handle_modifier(char modifier)
 {
 		int isMod = 0;
