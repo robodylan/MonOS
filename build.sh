@@ -9,7 +9,7 @@ dd if=/dev/zero of=out/bootable.img count=20 bs=1048576
 sudo parted --script out/bootable.img mklabel msdos mkpart p ext2 1 20 set 1 boot on
 sudo kpartx -a out/bootable.img
 sleep 1
-sudo mkfs.msdos -n MONOS -F 16 /dev/mapper/loop0p1
+sudo mkfs.msdos -s 2 -n MONOS -F 16 /dev/mapper/loop0p1
 sudo mkdir -p build/tmp/p1
 sudo mount /dev/mapper/loop0p1 build/tmp/p1
 sudo cp -r iso/*  build/tmp/p1

@@ -1,12 +1,14 @@
-unsigned int current_dir_sector = 2129;//Begin at root directory location
+unsigned int current_dir_sector = 2201;//Begin at root directory location
 int fs_init()
 {
 	kprintf("Debug: Checking to see if TEST Directory exists\n");
 	if(fs_dir_exists("TEST       "))
 	{
 		kprintf("TEST EXISTS!!!\n");
-		fs_ls_dir("TEST       ");
-		fs_open_dir();	
+		//fs_ls_dir();
+		fs_open_dir("TEST       ");
+		fs_ls_dir();
+		fs_open_dir("GRUB2      ");	
 	}
 	fs_ls_dir();		
 }
@@ -15,16 +17,19 @@ int fs_open_dir(char *name)
 {
 	char *dirData;//Init buffer for data
 	hd_rw(current_dir_sector, HD_READ, 512, dirData);//Read data into buffer
-	int i = 0;//Init counter
+	int i = 32;//Init counter
 	while(i < 512)//Loop through entries in sector
 	{
 		if(compName(dirData, name))//See if file exists TODO: Check atrib byte to see if it is a directory
-		{
-			current_dir_sector = (2048 + 187);//TODO: This is temporary and it needs to be fixed 
+		{	
+			current_dir_sector = 2201+((512 * 32) + ((((dirData[26])-2) * 2) * 512)) / 512;//Find first address of directory
+			return 0;
 		}
-		i += 64;
-		dirData += 64;
+		i += 32;//Increment counter to next directory entry
+		dirData += 32;//Increment pointer to next directory entry1
+		
 	}	
+	return 1;
 }
 
 int fs_close_dir()
@@ -45,15 +50,21 @@ int fs_ls_dir(void)//List contents of current directory, mainly for debug purpos
 		{
 			a++;//Increment counter
 		}
-		write(STDOUT_FILENO, dirData, a);//Write content of entry
-		if(dirData[8] != ' ' && dirData[8] != 0x00)//Check to see if there is a file extension
+		if(dirData[2] != 0x00)//Make sure its a proper entry
+		{
+			write(STDOUT_FILENO, dirData, a);//Write content of entry
+		}
+		if(dirData[8] != ' ' && dirData[8] != 0x00 && dirData[2] != 0x00)//Check to see if there is a file extension
 	 	{
 			kprintf(".");
 			write(STDOUT_FILENO, &dirData[8], 3);	
 		}
-		kprintf("\n");//New line
-		i += 64;//Increment counter to next directory entry
-		dirData += 64;//Increment pointer to next directory entry
+		if(dirData[2] != 0x00)//Make sure its a proper entry
+		{
+			kprintf("\n");//New line
+		}
+		i += 32;//Increment counter to next directory entry
+		dirData += 32;//Increment pointer to next directory entry
 	}
 	kprintf("\n");
 }
