@@ -1,40 +1,58 @@
-unsigned int current_dir_sector = 2201;//Begin at root directory location
+/*
+* fs.h
+*/
+unsigned int current_dir_sector;//Begin at root directory location
 int fs_init()
 {
-	kprintf("Debug: Checking to see if TEST Directory exists\n");
-	if(fs_dir_exists("TEST       "))
+	current_dir_sector = 2201;//Location of root directory TODO: Actually find this from the BPB
+	if(fs_dir_exists("BOOT       "))//Check to see if a known directory exists
 	{
-		kprintf("TEST EXISTS!!!\n");
-		//fs_ls_dir();
-		fs_open_dir("TEST       ");
-		fs_ls_dir();
-		fs_open_dir("GRUB2      ");	
+		kprintf("INIT: Filesystem found and DPT looks ok\n");//We found it so the filesystem should be ok
 	}
-	fs_ls_dir();		
+	else
+	{
+		kprintf("INIT: Filesystem is corrupt, not FAT16, or misconfigured\n");//We didn't find it so the filesystem might be corrupt
+	}
 }
 
-int fs_open_dir(char *name)
+int fs_cat_file(char *name)//Print contents of file, mainly for debug purposes
+{
+	char *fileData;//Init buffer for data
+	hd_rw(current_dir_sector, HD_READ, 512, fileData);//Read data into buffer
+	int i = 0;//Init counter
+	while(i < 512)//Loop through entries in sector
+	{
+		if(compName(fileData, name))//See if file exists TODO: Check atrib byte to see if it is a directory
+		{
+			int first_file_sector = current_dir_sector+(((512 * 32) + ((((fileData[26])-2) * 2) * 512)) / 512);//Find first address of file
+			return 0;//Return no errors
+			hd_rw(first_file_sector, HD_READ, 512, fileData);//Read file data at start cluster
+			kprintf("/n Contents of ");//Tell user what file the data is from
+			kprintf(name);//Append file name
+			write(STDOUT_FILENO, fileData, 512);//Write out file's contents	
+		}
+		i += 32;//Increment counter to next file entry
+		fileData += 32;//Increment pointer to next file entry
+	}
+	return 1;//Return error
+}
+
+int fs_open_dir(char *name)//Set location of current sector to given directory
 {
 	char *dirData;//Init buffer for data
 	hd_rw(current_dir_sector, HD_READ, 512, dirData);//Read data into buffer
-	int i = 32;//Init counter
+	int i = 0;//Init counter
 	while(i < 512)//Loop through entries in sector
 	{
 		if(compName(dirData, name))//See if file exists TODO: Check atrib byte to see if it is a directory
 		{	
-			current_dir_sector = 2201+((512 * 32) + ((((dirData[26])-2) * 2) * 512)) / 512;//Find first address of directory
-			return 0;
+			current_dir_sector += ((512 * 32) + ((((dirData[26])-2) * 2) * 512)) / 512;//Find first address of directory
+			return 0;//Return no errors
 		}
 		i += 32;//Increment counter to next directory entry
-		dirData += 32;//Increment pointer to next directory entry1
-		
+		dirData += 32;//Increment pointer to next directory entry	
 	}	
-	return 1;
-}
-
-int fs_close_dir()
-{
-	
+	return 1;//Return error
 }
 
 int fs_ls_dir(void)//List contents of current directory, mainly for debug purposes
@@ -61,12 +79,12 @@ int fs_ls_dir(void)//List contents of current directory, mainly for debug purpos
 		}
 		if(dirData[2] != 0x00)//Make sure its a proper entry
 		{
-			kprintf("\n");//New line
+			kprintf("\n");//Newline
 		}
 		i += 32;//Increment counter to next directory entry
 		dirData += 32;//Increment pointer to next directory entry
 	}
-	kprintf("\n");
+	kprintf("\n");//Padding
 }
 
 int fs_file_exists(char *filename)//Check if a file exists
@@ -84,7 +102,7 @@ int fs_file_exists(char *filename)//Check if a file exists
 		i += 64;//Increment counter to next directory entry
 		fileData += 64;//Increment pointer to next directory entry
 	}
-	return fileExists;
+	return fileExists;//Return boolean of whether file exists
 }
 
 int fs_dir_exists(char *dirname)//Check if a directory exists
@@ -102,14 +120,14 @@ int fs_dir_exists(char *dirname)//Check if a directory exists
 		i += 64;//Increment counter to next directory
 		dirData += 64;//Increment pointer to next directory entry
 	}
-	return dirExists;
+	return dirExists;//Return boolean of whether directory exists
 }
 
 //Credit to Keith S. for following function
 int isBitSet(int value, int bitNumber)//Check to see if a specific bit is set
 {
-	int bit = (value & (1 << bitNumber-1)) != 0;
-	return bit;
+	int bit = (value & (1 << bitNumber-1)) != 0;//Check if bit is set
+	return bit;//Return boolean of whether bit was set
 }
 
 int compName(char *a, char *b)//Check if name matches a string TODO: Rename this function
@@ -120,11 +138,11 @@ int compName(char *a, char *b)//Check if name matches a string TODO: Rename this
 	{
 		if(a[i] < 63) a[i] = ' ';//If null set to space
 		if(b[i] < 63) b[i] = ' ';//If null set to space
-		if(a[i] != b[i])
+		if(a[i] != b[i])//Check to see if they are different
 		{ 
-			isSame = 0;
+			isSame = 0;//They are different so the filenames are the not the sane
 		}
-		i++;
+		i++;//Increment counter
 	}
-	return isSame;
+	return isSame;//Return boolean
 }

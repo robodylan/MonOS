@@ -19,5 +19,9 @@ void main(void)
 	kb_init();//Init Keyboard
 	fs_init();//Init filesystem
 	cli_init();//Init command line
+	fs_open_dir("TEST       ");
+	fs_ls_dir();
+	fs_cat_file("123     TXT");//Show contents of test file
+	fs_ls_dir();
 	while(1==1);//Prevent overflow			
 }

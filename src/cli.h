@@ -1,4 +1,6 @@
-char PRINTF_COLOR;//TODO: Need to rename this 
+/*
+* cli.h
+*/ 
 int handle_modifier(char modifier)
 {
 		int isMod = 0;
@@ -22,7 +24,7 @@ int handle_modifier(char modifier)
 		return isMod;
 }
 
-void kprintf(char *msg)
+int kprintf(char *msg)
 {
 	int i = 0;//Declare counter
 	while(msg[i] != 0)//Loop until string termination
@@ -40,8 +42,10 @@ void kprintf(char *msg)
 		}
 	}		
 }
-
-void cli_init() 
+int cli_init() 
 {
 	kprintf("Entering Command Line Interface...\n");
+	kprintf("\nWelcome to directory explorer.\n");
+	kprintf("\nPress w to go up and s to go down\n");//Still in progress...
+	kprintf("\nIf you are seeing this, this hasn't been fully implemented yet\n");
 }
