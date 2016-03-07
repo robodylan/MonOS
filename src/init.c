@@ -1,9 +1,11 @@
 /*
-*  init.c
+*    init.c
 */
 extern void write_port(unsigned short port, short data);
 extern short read_port(unsigned short port);
 
+//Include kernel modules
+#include "sys.h"
 #include "kb.h"
 #include "io.h"
 #include "cli.h"
@@ -11,9 +13,9 @@ extern short read_port(unsigned short port);
 #include "fs.h"
 				
 //TODO: add timer/sleep function/syscall
- 
+//CURRENT: syscall
 //Kernel Entry
-void main(void)
+void k_main(void)
 {
 	kprintf("INIT: Entering runlevel 3\n");
 	kb_init();//Init Keyboard
