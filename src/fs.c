@@ -1,6 +1,12 @@
 /*
 * fs.h
 */
+#include "include/hd.h"
+#include "include/io.h"
+#include "include/cli.h"
+#include "include/fs.h"
+
+unsigned int current_dir_sector;
 unsigned int current_dir_sector;//Begin at root directory location
 int fs_init()
 {
@@ -29,7 +35,7 @@ int fs_cat_file(char *name)//Print contents of file, mainly for debug purposes
 			hd_rw(first_file_sector, HD_READ, 512, fileData);//Read file data at start cluster
 			kprintf("/n Contents of ");//Tell user what file the data is from
 			kprintf(name);//Append file name
-			write(STDOUT_FILENO, fileData, 512);//Write out file's contents	
+			write(STDOUT_FILENO, fileData, 512);//Write out file's contents
 		}
 		i += 32;//Increment counter to next file entry
 		fileData += 32;//Increment pointer to next file entry
@@ -45,13 +51,13 @@ int fs_open_dir(char *name)//Set location of current sector to given directory
 	while(i < 512)//Loop through entries in sector
 	{
 		if(compName(dirData, name))//See if file exists TODO: Check atrib byte to see if it is a directory
-		{	
+		{
 			current_dir_sector += ((512 * 32) + ((((dirData[26])-2) * 2) * 512)) / 512;//Find first address of directory
 			return 0;//Return no errors
 		}
 		i += 32;//Increment counter to next directory entry
-		dirData += 32;//Increment pointer to next directory entry	
-	}	
+		dirData += 32;//Increment pointer to next directory entry
+	}
 	return 1;//Return error
 }
 
@@ -75,7 +81,7 @@ int fs_ls_dir(void)//List contents of current directory, mainly for debug purpos
 		if(dirData[8] != ' ' && dirData[8] != 0x00 && dirData[2] != 0x00)//Check to see if there is a file extension
 	 	{
 			kprintf(".");
-			write(STDOUT_FILENO, &dirData[8], 3);	
+			write(STDOUT_FILENO, &dirData[8], 3);
 		}
 		if(dirData[2] != 0x00)//Make sure its a proper entry
 		{
@@ -139,7 +145,7 @@ int compName(char *a, char *b)//Check if name matches a string TODO: Rename this
 		if(a[i] < 63) a[i] = ' ';//If null set to space
 		if(b[i] < 63) b[i] = ' ';//If null set to space
 		if(a[i] != b[i])//Check to see if they are different
-		{ 
+		{
 			isSame = 0;//They are different so the filenames are the not the sane
 		}
 		i++;//Increment counter
