@@ -24,12 +24,12 @@ read_port:
 
 write_port:
 	mov   edx, [esp + 4]    ;Pass in first argument
-	mov   al, [esp + 4 + 4] ;Pass in second argument  
+	mov   al, [esp + 4 + 4] ;Pass in second argument
 	out   dx, ax ;Output to port
 	ret ;Read from port
 
 read_key:
-	mov ah, 0x10 ;Tell CPU we want to read 
+	mov ah, 0x10 ;Tell CPU we want to read
 	int 0x16 ;Call input interrupt
 	mov al, ah ;Write to port
 	ret ;Return to where function was called
@@ -43,13 +43,12 @@ int_h:
  	jne .write
 	call sys_read
 	jmp .done
-.write
+.write:
 	cmp ah, 2
 	jne .badcode
 	call sys_write
 	jmp .done
-.badcode
+.badcode:
 	mov eax, 0xFFFFFFFF
-.done 
+.done:
 	iretd
- 
